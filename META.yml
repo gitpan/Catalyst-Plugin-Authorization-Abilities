@@ -19,9 +19,8 @@ no_index:
 requires:
   Catalyst::Plugin::Authentication: 0.10003
   Catalyst::Runtime: 5.7
-  Set::Object: 1.14
   UNIVERSAL::isa: 0.05
   perl: 5.8.0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.01
+version: 0.02

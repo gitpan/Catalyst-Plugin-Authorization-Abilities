@@ -8,7 +8,7 @@ use warnings;
 use Scalar::Util        ();
 use Catalyst::Exception ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub check_user_ability {
 	my ($c, @actions) = @_;
@@ -45,14 +45,29 @@ sub assert_user_ability {
 			# Check specific user abilities
 			if ($act->name eq $_) {
 				$lflag = 1;
+				last;
 			}
 		}
 		unless ($lflag) {
 			# Check user abilities via roles
 			foreach my $role ($user->user_roles) {
+				# In role actions
 				foreach my $act ($role->actions) {
 					if ($act->name eq $_) {
 						$lflag = 1;
+						last;
+					}
+				}
+				# In linked roles
+				unless ($lflag) {
+					foreach my $child ($role->roles) {
+						foreach my $act ($child->actions) {
+							if ($act->name eq $_) {
+								$lflag = 1;
+								last;
+							}
+						}
+						last if $lflag;
 					}
 				}
 			}
@@ -75,6 +90,44 @@ sub assert_user_ability {
 	} else {
 		$c->log->debug("Ability denied: @actions") if $c->debug;
 		Catalyst::Exception->throw("Missing abilities");
+	}
+}
+
+sub check_user_roles {
+	my ($c, @roles) = @_;
+
+	my $user;
+
+	if ( Scalar::Util::blessed( $roles[0] ) && $roles[0]->isa("Catalyst::Authentication::User") ) {
+		$user = shift @roles;
+	}
+
+	$user ||= $c->user;
+
+	return undef unless $user;
+
+	my $flag; # Global flag for all roles
+	foreach (@roles) {
+		foreach my $role ($user->user_roles) {
+			# Check specific user abilities
+			if ($role->name eq $_) {
+				$flag = 1;
+				last;
+			} else {
+				undef $flag;
+			}
+		}
+		last if $flag;
+	}
+
+	local $" = ", ";
+
+	if ($flag) {
+		$c->log->debug("Role granted: @roles") if $c->debug;
+		return 1;
+	} else {
+		$c->log->debug("Role denied: @roles") if $c->debug;
+		return undef;
 	}
 }
 
@@ -107,6 +160,17 @@ Catalyst::Plugin::Authorization::Abilities - Ability based authorization for Cat
 		$c->model("Foo")->delete_all();
 	}
 
+	# Checking roles is also provided
+	sub display_user : Local {
+		my ( $self, $c ) = @_;
+	
+		if ($c->check_user_roles(qw/admin/)) {
+			print "User belongs to the admin role.";
+		} else {
+			print "User doesn't belong to the admin role.";
+		}
+	}
+
 	# Checkout required database schemas under REQUIRED SCHEMAS
 
 =head1 DESCRIPTION
@@ -122,6 +186,10 @@ via roles the user can assume. For example, if user 'user01' is member of role
 than they will only be able to do so if the 'delete_foo' ability was given to
 either the user itself or the 'admin' role itself.
 
+Roles can be assigned other roles. For example, roles 'mods' and 'editors'
+can be assigned _inside_ role 'mega_mods'. Users of the 'mega_mods' role will assume
+all actions owned by the 'mods' and 'editors' roles.
+
 With C<check_user_ability> and C<assert_user_ability>, these conditionals are checked
 to grant or deny the user access to the required action.
 
@@ -135,7 +203,7 @@ posts, but not any other administrative action. So in essence, this plugin takes
 the control of who's able to do what from the developer and hands it to the end-user.
 
 Note that this plugin is not to be used in conjunction with L<Catalyst::Plugin::Authorization::Roles>,
-and that it requires several tables to be present in the database/schema (see SYNOPSIS).
+and that it requires several tables to be present in the database/schema (see REQUIRED SCHEMAS).
 
 =head1 METHODS
 
@@ -159,14 +227,21 @@ user might have never been able to do anything). The super-user is identified
 by supplying a user ID to MyApp's config (see SYNOPSIS). This setting defaults
 to user ID 1.
 
-=item check_user_ability [ $user ], @roles
+=item check_user_ability [ $user ], @actions
 
 Takes the same args as C<assert_user_ability>, and performs the same check, but
 instead of throwing errors returns a boolean value.
 
+=item check_user_roles [ $user ], @roles
+
+Checks that the user (as supplied by the first argument, or, if omitted,
+C<< $c->user >>) belongs to the specified roles. Returns a true value
+only if user belongs to all roles specified.
+
 =back
 
 =head1 REQUIRED SCHEMAS
+
 MyApp::Schema::Actions
 
 	package MyApp::Schema::Actions;
@@ -198,6 +273,10 @@ MyApp::Schema::Roles
 		{ data_type => "VARCHAR", is_nullable => 0, size => 128 },
 	);
 	__PACKAGE__->set_primary_key("id");
+	__PACKAGE__->has_many(map_role_actions => 'MyApp::Schema::RoleActions', 'role_id');
+	__PACKAGE__->many_to_many(actions => 'map_role_actions', 'action');
+	__PACKAGE__->has_many(map_role_roles => 'MyApp::Schema::RoleRoles', 'parent_id');
+	__PACKAGE__->many_to_many(roles => 'map_role_roles', 'role');
 
 MyApp::Schema::UserRoles
 
@@ -213,6 +292,23 @@ MyApp::Schema::UserRoles
 		{ data_type => "INTEGER", is_nullable => 0, size => undef },
 	);
 	__PACKAGE__->set_primary_key("user_id", "role_id");
+	__PACKAGE__->belongs_to('role' => 'MyApp::Schema::Roles', 'role_id');
+
+MyApp::Schema::RoleRoles (new since 0.2)
+
+	package MyApp::Schema::RoleRoles;
+
+	...
+
+	__PACKAGE__->table("role_roles");
+	__PACKAGE__->add_columns(
+		"parent_id",
+		{ data_type => "INTEGER", is_nullable => 0, size => undef },
+		"role_id",
+		{ data_type => "INTEGER", is_nullable => 0, size => undef },
+	);
+	__PACKAGE__->set_primary_key("role_id", "parent_id");
+	__PACKAGE__->belongs_to('parent' => 'MyApp::Schema::Roles', 'parent_id');
 	__PACKAGE__->belongs_to('role' => 'MyApp::Schema::Roles', 'role_id');
 
 MyApp::Schema::RoleActions

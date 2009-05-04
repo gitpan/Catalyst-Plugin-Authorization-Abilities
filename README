@@ -21,6 +21,17 @@ SYNOPSIS
 		$c->model("Foo")->delete_all();
 	}
 
+	# Checking roles is also provided
+	sub display_user : Local {
+		my ( $self, $c ) = @_;
+	
+		if ($c->check_user_roles(qw/admin/)) {
+			print "User belongs to the admin role.";
+		} else {
+			print "User doesn't belong to the admin role.";
+		}
+	}
+
 	# Checkout required database schemas under REQUIRED SCHEMAS
 
 DESCRIPTION
@@ -36,6 +47,10 @@ DESCRIPTION
 	than they will only be able to do so if the 'delete_foo' ability was given to
 	either the user itself or the 'admin' role itself.
 
+	Roles can be assigned other roles. For example, roles 'mods' and 'editors'
+	can be assigned _inside_ role 'mega_mods'. Users of the 'mega_mods' role will assume
+	all actions owned by the 'mods' and 'editors' roles.
+
 	With check_user_ability and assert_user_ability, these conditionals are checked
 	to grant or deny the user access to the required action.
 
@@ -49,7 +64,7 @@ DESCRIPTION
 	the control of who's able to do what from the developer and hands it to the end-user.
 
 	Note that this plugin is not to be used in conjunction with Catalyst::Plugin::Authorization::Roles,
-	and that it requires several tables to be present in the database/schema (see SYNOPSIS).
+	and that it requires several tables to be present in the database/schema (see REQUIRED SCHEMAS).
 
 METHODS
 
@@ -71,10 +86,15 @@ METHODS
 		by supplying a user ID to MyApp's config (see SYNOPSIS). This setting defaults
 		to user ID 1.
 
-	check_user_ability [ $user ], @roles
+	check_user_ability [ $user ], @actions
 
 		Takes the same args as assert_user_ability, and performs the same check, but
 		instead of throwing errors returns a boolean value.
+
+	check_user_roles [ $user ], @roles
+
+		Checks that the user (as supplied by the first argument, or, if omitted,
+		$c->user) belongs to the specified roles. Returns a boolean value.
 
 REQUIRED SCHEMAS
 
@@ -109,6 +129,10 @@ REQUIRED SCHEMAS
 			{ data_type => "VARCHAR", is_nullable => 0, size => 128 },
 		);
 		__PACKAGE__->set_primary_key("id");
+		__PACKAGE__->has_many(map_role_actions => 'MyApp::Schema::RoleActions', 'role_id');
+		__PACKAGE__->many_to_many(actions => 'map_role_actions', 'action');
+		__PACKAGE__->has_many(map_role_roles => 'MyApp::Schema::RoleRoles', 'parent_id');
+		__PACKAGE__->many_to_many(roles => 'map_role_roles', 'role');
 
 	MyApp::Schema::UserRoles
 
@@ -124,6 +148,23 @@ REQUIRED SCHEMAS
 			{ data_type => "INTEGER", is_nullable => 0, size => undef },
 		);
 		__PACKAGE__->set_primary_key("user_id", "role_id");
+		__PACKAGE__->belongs_to('role' => 'MyApp::Schema::Roles', 'role_id');
+
+	MyApp::Schema::RoleRoles (new since 0.2)
+
+		package MyApp::Schema::RoleRoles;
+
+		...
+
+		__PACKAGE__->table("role_roles");
+		__PACKAGE__->add_columns(
+			"parent_id",
+			{ data_type => "INTEGER", is_nullable => 0, size => undef },
+			"role_id",
+			{ data_type => "INTEGER", is_nullable => 0, size => undef },
+		);
+		__PACKAGE__->set_primary_key("role_id", "parent_id");
+		__PACKAGE__->belongs_to('parent' => 'MyApp::Schema::Roles', 'parent_id');
 		__PACKAGE__->belongs_to('role' => 'MyApp::Schema::Roles', 'role_id');
 
 	MyApp::Schema::RoleActions
