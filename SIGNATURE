@@ -1,0 +1,38 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.66.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+SHA1 18a4dab0dd72c8161a061cafea11a585b36260a5 Changes
+SHA1 923e30715ea029a358c4a9c18024efec1228ac80 INSTALL
+SHA1 4fd10efcea7157e7d9c3a45e000c91119dcad1f7 LICENSE
+SHA1 41d5acb476c6ac337543e17a229653c4507ff1e7 MANIFEST
+SHA1 fb5bbedc61504f713cb9d0de90f39a602f28810f MANIFEST.SKIP
+SHA1 9ab98a9f355c21e768bbfd7178dc85b633a41131 META.json
+SHA1 81f08763c0977d968e6cc9d79286a944de4d2406 META.yml
+SHA1 972aef4375ab0c4a59328921cdb68b67bfac9fb6 Makefile.PL
+SHA1 9303ea077ee327972f9e41d728b00d0a6ea1302d README
+SHA1 81b72d25d6d18298804d73bbfffdc5f9681ff359 dist.ini
+SHA1 1dfb059fc6848ef72c56736a6d447e6e604af328 lib/Catalyst/Plugin/Authorization/Abilities.pm
+SHA1 ce976f9eed96e4d48d2e99075b72f9f0fb4164c5 t/00-load.t
+SHA1 87768d177f8c2e2df9c591cde869e7c8a245555e t/release-dist-manifest.t
+SHA1 9433c240fe590bc404ab68ff63984df763e347ed t/release-pod-coverage.t
+SHA1 b30cbdfaf935017c4568c0c91b242438cb87786e t/release-pod-syntax.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iF4EAREIAAYFAk2PoXQACgkQa4OHQAFM10f0zQEAmM2WWaj/K4kDZHaerIH790XB
+VUzRGfkOEzpUnyd8RXsA/3jBI74cpTF7Jlxjoy0e9iOndWCNdDpCuUdi7PMHKls4
+=fM2J
+-----END PGP SIGNATURE-----

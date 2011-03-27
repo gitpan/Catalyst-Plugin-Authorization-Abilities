@@ -1,0 +1,48 @@
+{
+   "abstract" : "Ability based authorization for Catalyst/DBIx::Class apps, based on Catalyst::Plugin::Authorization::Roles",
+   "author" : [
+      "Ido Perlmuter <ido@ido50.net>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.110580",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Catalyst-Plugin-Authorization-Abilities",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.31",
+            "version" : "0.77"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Catalyst::Exception" : 0,
+            "Scalar::Util" : 0,
+            "perl" : "5.006",
+            "version" : "0.77"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "homepage" : "http://github.com/ido50/Catalyst-Plugin-Authorization-Abilities/tree",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/ido50/Catalyst-Plugin-Authorization-Abilities.git",
+         "web" : "http://github.com/ido50/Catalyst-Plugin-Authorization-Abilities/tree"
+      }
+   },
+   "version" : "v0.30.0"
+}
+
