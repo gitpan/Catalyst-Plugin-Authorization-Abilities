@@ -4,7 +4,7 @@ NAME
     Catalyst::Plugin::Authorization::Roles
 
 VERSION
-    version v0.30.0
+    version v0.31.0
 
 SYNOPSIS
             # In MyApp.pm (notice we do not use Authorization::Roles):
@@ -247,6 +247,8 @@ AUTHOR
 
 ACKNOWLEDGEMENTS
     Based on Catalyst::Plugin::Authorization::Roles by Yuval Kogman.
+
+    Thanks to Dabg for writing a test suite.
 
 BUGS
     Please report any bugs or feature requests to

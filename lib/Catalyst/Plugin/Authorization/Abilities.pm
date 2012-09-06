@@ -8,7 +8,7 @@ use warnings;
 use Scalar::Util        ();
 use Catalyst::Exception ();
 
-use version 0.77; our $VERSION = version->declare("v0.30.0");
+use version 0.77; our $VERSION = version->declare("v0.31.0");
 
 =head1 NAME
 
@@ -16,7 +16,7 @@ Catalyst::Plugin::Authorization::Abilities - Ability based authorization for Cat
 
 =head1 VERSION
 
-version v0.30.0
+version v0.31.0
 
 =head1 SYNOPSIS
 
@@ -429,6 +429,8 @@ Ido Perlmuter, C<< <ido at ido50.net> >>
 =head1 ACKNOWLEDGEMENTS
 
 Based on L<Catalyst::Plugin::Authorization::Roles> by Yuval Kogman.
+
+Thanks to Dabg for writing a test suite.
 
 =head1 BUGS
 

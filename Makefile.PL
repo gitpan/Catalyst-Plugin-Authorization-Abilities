@@ -2,34 +2,69 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.006; }
+use 5.006;
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 
 
 my %WriteMakefileArgs = (
-  'ABSTRACT' => 'Ability based authorization for Catalyst/DBIx::Class apps, based on Catalyst::Plugin::Authorization::Roles',
-  'AUTHOR' => 'Ido Perlmuter <ido@ido50.net>',
-  'BUILD_REQUIRES' => {
-    'Test::More' => '0'
+  "ABSTRACT" => "Ability based authorization for Catalyst/DBIx::Class apps, based on Catalyst::Plugin::Authorization::Roles",
+  "AUTHOR" => "Ido Perlmuter <ido\@ido50.net>",
+  "BUILD_REQUIRES" => {
+    "Carp" => 0,
+    "Catalyst" => 0,
+    "Catalyst::Authentication::Store::DBIx::Class" => 0,
+    "Catalyst::Controller" => 0,
+    "Catalyst::Model::DBIC::Schema" => 0,
+    "Catalyst::Plugin::Authentication" => 0,
+    "Catalyst::Plugin::Session" => 0,
+    "Catalyst::Plugin::Session::State::Cookie" => 0,
+    "Catalyst::Plugin::Session::Store::FastMmap" => 0,
+    "Catalyst::Runtime" => "5.80",
+    "Catalyst::ScriptRunner" => 0,
+    "Catalyst::Test" => 0,
+    "Catalyst::View::TT" => 0,
+    "CatalystX::SimpleLogin" => 0,
+    "Config::JFDI" => 0,
+    "DBD::SQLite" => 0,
+    "DBIx::Class::Core" => 0,
+    "DBIx::Class::DateTime::Epoch" => 0,
+    "DBIx::Class::EncodedColumn" => 0,
+    "DBIx::Class::Schema" => 0,
+    "FindBin" => 0,
+    "HTML::FormFu" => 0,
+    "HTTP::Request::Common" => 0,
+    "Hash::Merge" => 0,
+    "Module::Install::Catalyst" => 0,
+    "Moose" => 0,
+    "MooseX::NonMoose" => 0,
+    "MooseX::Types::Path::Class" => 0,
+    "Path::Class" => 0,
+    "SQL::Translator" => 0,
+    "Test::More" => 0,
+    "UNIVERSAL::require" => 0,
+    "base" => 0,
+    "inc::Module::Install" => 0,
+    "namespace::autoclean" => 0
   },
-  'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31',
-    'version' => '0.77'
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
   },
-  'DISTNAME' => 'Catalyst-Plugin-Authorization-Abilities',
-  'EXE_FILES' => [],
-  'LICENSE' => 'perl',
-  'NAME' => 'Catalyst::Plugin::Authorization::Abilities',
-  'PREREQ_PM' => {
-    'Catalyst::Exception' => '0',
-    'Scalar::Util' => '0',
-    'version' => '0.77'
+  "DISTNAME" => "Catalyst-Plugin-Authorization-Abilities",
+  "EXE_FILES" => [],
+  "LICENSE" => "perl",
+  "NAME" => "Catalyst::Plugin::Authorization::Abilities",
+  "PREREQ_PM" => {
+    "Catalyst::Exception" => 0,
+    "Scalar::Util" => 0,
+    "strict" => 0,
+    "version" => "0.77",
+    "warnings" => 0
   },
-  'VERSION' => 'v0.30.0',
-  'test' => {
-    'TESTS' => 't/*.t'
+  "VERSION" => "v0.31.0",
+  "test" => {
+    "TESTS" => "t/*.t"
   }
 );
 
